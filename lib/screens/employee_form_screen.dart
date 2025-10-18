@@ -4,6 +4,7 @@ import '../db/db_helper.dart';
 
 class EmployeeFormScreen extends StatefulWidget {
   final Employee? employee;
+
   const EmployeeFormScreen({super.key, this.employee});
 
   @override
@@ -12,102 +13,119 @@ class EmployeeFormScreen extends StatefulWidget {
 
 class _EmployeeFormScreenState extends State<EmployeeFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final dbHelper = DBHelper();
+  final _dbHelper = DBHelper();
 
-  late TextEditingController nameController;
-  late TextEditingController positionController;
-  late TextEditingController baseSalaryController;
-  late TextEditingController allowanceController;
-  late TextEditingController deductionController;
-
-  bool get isEdit => widget.employee != null;
+  final _idController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _positionController = TextEditingController();
+  final _baseController = TextEditingController();
+  final _allowanceController = TextEditingController();
+  final _deductionController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    nameController =
-        TextEditingController(text: widget.employee?.name ?? '');
-    positionController =
-        TextEditingController(text: widget.employee?.position ?? '');
-    baseSalaryController = TextEditingController(
-        text: widget.employee?.baseSalary.toString() ?? '');
-    allowanceController = TextEditingController(
-        text: widget.employee?.allowance.toString() ?? '');
-    deductionController = TextEditingController(
-        text: widget.employee?.deduction.toString() ?? '');
+    if (widget.employee != null) {
+      _idController.text = widget.employee!.id.toString();
+      _nameController.text = widget.employee!.name;
+      _positionController.text = widget.employee!.position;
+      _baseController.text = widget.employee!.baseSalary.toString();
+      _allowanceController.text = widget.employee!.allowance.toString();
+      _deductionController.text = widget.employee!.deduction.toString();
+    }
+  }
+
+  @override
+  void dispose() {
+    _idController.dispose();
+    _nameController.dispose();
+    _positionController.dispose();
+    _baseController.dispose();
+    _allowanceController.dispose();
+    _deductionController.dispose();
+    super.dispose();
   }
 
   void _saveEmployee() async {
     if (_formKey.currentState!.validate()) {
       final emp = Employee(
-        id: widget.employee?.id,
-        name: nameController.text,
-        position: positionController.text,
-        baseSalary: double.parse(baseSalaryController.text),
-        allowance: double.parse(allowanceController.text),
-        deduction: double.parse(deductionController.text),
+        id: int.parse(_idController.text),
+        name: _nameController.text,
+        position: _positionController.text,
+        baseSalary: double.parse(_baseController.text),
+        allowance: double.parse(_allowanceController.text),
+        deduction: double.parse(_deductionController.text),
       );
-      if (isEdit) {
-        await dbHelper.updateEmployee(emp);
+
+      if (widget.employee == null) {
+        await _dbHelper.insertEmployee(emp);
       } else {
-        await dbHelper.insertEmployee(emp);
+        await _dbHelper.updateEmployee(emp);
       }
-      if (mounted) Navigator.pop(context, true);
+
+      if (context.mounted) Navigator.pop(context, true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(isEdit ? 'Edit Karyawan' : 'Tambah Karyawan')),
+      appBar: AppBar(title: Text(widget.employee == null ? 'Tambah Karyawan' : 'Edit Karyawan')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              _buildTextField(nameController, 'Nama Karyawan'),
-              _buildTextField(positionController, 'Jabatan'),
-              _buildTextField(baseSalaryController, 'Gaji Pokok', number: true),
-              _buildTextField(allowanceController, 'Tunjangan', number: true),
-              _buildTextField(deductionController, 'Potongan', number: true),
+              TextFormField(
+                controller: _idController,
+                decoration: const InputDecoration(labelText: 'ID Karyawan'),
+                keyboardType: TextInputType.number,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'ID wajib diisi' : null,
+              ),
+              TextFormField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: 'Nama'),
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Nama wajib diisi' : null,
+              ),
+              TextFormField(
+                controller: _positionController,
+                decoration: const InputDecoration(labelText: 'Jabatan'),
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Jabatan wajib diisi' : null,
+              ),
+              TextFormField(
+                controller: _baseController,
+                decoration: const InputDecoration(labelText: 'Gaji Pokok'),
+                keyboardType: TextInputType.number,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Gaji Pokok wajib diisi' : null,
+              ),
+              TextFormField(
+                controller: _allowanceController,
+                decoration: const InputDecoration(labelText: 'Tunjangan'),
+                keyboardType: TextInputType.number,
+              ),
+              TextFormField(
+                controller: _deductionController,
+                decoration: const InputDecoration(labelText: 'Potongan'),
+                keyboardType: TextInputType.number,
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
-              style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue, 
-              foregroundColor: Colors.white, 
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                ),
                 onPressed: _saveEmployee,
-                child: const Text(
-                  "Simpan",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.indigo,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
+                child: const Text('Simpan Data', style: TextStyle(fontSize: 16)),
               ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(TextEditingController controller, String label,
-      {bool number = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: number ? TextInputType.number : TextInputType.text,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Field tidak boleh kosong';
-          }
-          return null;
-        },
       ),
     );
   }

@@ -15,32 +15,6 @@ class PayrollApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.indigo,
         scaffoldBackgroundColor: Colors.grey[100],
-
-        //Tambahan Tema Tombol
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.indigo, // warna tombol
-            foregroundColor: Colors.white,  // warna teks
-            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.indigo, // warna teks tombol
-            textStyle: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ),
-        outlinedButtonTheme: OutlinedButtonThemeData(
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.indigo,
-            side: const BorderSide(color: Colors.indigo, width: 1.5),
-            textStyle: const TextStyle(fontWeight: FontWeight.w600),
-          ),
-        ),
       ),
       home: const EmployeeListScreen(),
       debugShowCheckedModeBanner: false,

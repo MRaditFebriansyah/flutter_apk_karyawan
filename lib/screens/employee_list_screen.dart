@@ -28,7 +28,6 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     });
   }
 
-  // Fungsi untuk menghapus karyawan dari database
   void _deleteEmployee(int id) async {
     await dbHelper.deleteEmployee(id);
     refreshEmployees();
@@ -37,14 +36,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Sistem Penggajian Mobile',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: Colors.indigo,
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Sistem Penggajian Mobile')),
       body: FutureBuilder<List<Employee>>(
         future: employees,
         builder: (context, snapshot) {
@@ -53,16 +45,11 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
           }
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(
-              child: Text(
-                'Belum ada data karyawan.',
-                style: TextStyle(fontSize: 16),
-              ),
-            );
+                child: Text('Belum ada data karyawan.',
+                    style: TextStyle(fontSize: 16)));
           }
-
           final data = snapshot.data!;
           final format = NumberFormat.currency(locale: 'id_ID', symbol: 'Rp ');
-
           return ListView.builder(
             padding: const EdgeInsets.all(10),
             itemCount: data.length,
@@ -70,27 +57,19 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
               final emp = data[index];
               return Card(
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                    borderRadius: BorderRadius.circular(12)),
                 elevation: 2,
                 margin: const EdgeInsets.symmetric(vertical: 6),
                 child: ListTile(
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  title: Text(
-                    emp.name,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
+                  title: Text(emp.name,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16)),
                   subtitle: Text(emp.position),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        format.format(emp.totalSalary),
-                        style: const TextStyle(
-                            color: Colors.indigo, fontWeight: FontWeight.w600),
-                      ),
+                      Text(format.format(emp.totalSalary),
+                          style: const TextStyle(color: Colors.indigo)),
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () async {
@@ -98,8 +77,8 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                             context: context,
                             builder: (context) => AlertDialog(
                               title: const Text('Hapus Karyawan'),
-                              content: Text(
-                                  'Yakin ingin menghapus ${emp.name}?'),
+                              content:
+                                  Text('Yakin ingin menghapus ${emp.name}?'),
                               actions: [
                                 TextButton(
                                   onPressed: () =>
@@ -110,8 +89,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                                   onPressed: () =>
                                       Navigator.pop(context, true),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                  ),
+                                      backgroundColor: Colors.red),
                                   child: const Text('Hapus'),
                                 ),
                               ],
@@ -149,7 +127,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
           );
           refreshEmployees();
         },
-        child: const Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add),
       ),
     );
   }

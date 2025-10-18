@@ -19,7 +19,6 @@ class EmployeeDetailScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            tooltip: 'Edit Data',
             onPressed: () async {
               await Navigator.push(
                 context,
@@ -32,33 +31,22 @@ class EmployeeDetailScreen extends StatelessWidget {
           ),
           IconButton(
             icon: const Icon(Icons.delete),
-            tooltip: 'Hapus Data',
             onPressed: () async {
               final confirm = await showDialog(
                 context: context,
                 builder: (_) => AlertDialog(
                   title: const Text('Konfirmasi'),
-                  content:
-                      const Text('Yakin ingin menghapus data karyawan ini?'),
+                  content: const Text('Yakin ingin menghapus data ini?'),
                   actions: [
                     TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.grey[700], // teks Batal abu gelap
-                      ),
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Batal'),
-                    ),
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Batal')),
                     TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.red, // teks Hapus merah jelas
-                      ),
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Hapus'),
-                    ),
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Hapus')),
                   ],
                 ),
               );
-
               if (confirm == true) {
                 await dbHelper.deleteEmployee(employee.id!);
                 if (context.mounted) Navigator.pop(context, true);
@@ -70,8 +58,7 @@ class EmployeeDetailScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Card(
-          elevation: 3,
-          shadowColor: Colors.grey[400],
+          elevation: 2,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
@@ -84,7 +71,7 @@ class EmployeeDetailScreen extends StatelessWidget {
                 _buildRow('Gaji Pokok', format.format(employee.baseSalary)),
                 _buildRow('Tunjangan', format.format(employee.allowance)),
                 _buildRow('Potongan', format.format(employee.deduction)),
-                const Divider(thickness: 1),
+                const Divider(),
                 _buildRow('Total Gaji', format.format(employee.totalSalary),
                     bold: true),
               ],
@@ -101,21 +88,14 @@ class EmployeeDetailScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: bold ? FontWeight.bold : FontWeight.w500,
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: bold ? FontWeight.bold : FontWeight.w400,
-              color: bold ? Colors.blue[800] : Colors.black87,
-            ),
-          ),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: bold ? FontWeight.bold : FontWeight.w500)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: bold ? FontWeight.bold : FontWeight.w400)),
         ],
       ),
     );

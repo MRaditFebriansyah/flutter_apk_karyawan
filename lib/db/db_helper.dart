@@ -3,13 +3,9 @@ import 'package:path/path.dart';
 import '../models/employee.dart';
 
 class DBHelper {
-  static final DBHelper _instance = DBHelper._internal();
-  factory DBHelper() => _instance;
-  DBHelper._internal();
-
   static Database? _db;
 
-  Future<Database> get db async {
+  Future<Database> get database async {
     if (_db != null) return _db!;
     _db = await _initDb();
     return _db!;
@@ -24,14 +20,13 @@ class DBHelper {
       version: 1,
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE employees(
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+          CREATE TABLE employees (
+            id INTEGER PRIMARY KEY,
             name TEXT,
             position TEXT,
             baseSalary REAL,
             allowance REAL,
-            deduction REAL,
-            totalSalary REAL
+            deduction REAL
           )
         ''');
       },
@@ -39,21 +34,23 @@ class DBHelper {
   }
 
   Future<int> insertEmployee(Employee emp) async {
-    final database = await db;
-    emp.totalSalary = emp.baseSalary + emp.allowance - emp.deduction;
-    return await database.insert('employees', emp.toMap());
+    final db = await database;
+    return await db.insert(
+      'employees',
+      emp.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   Future<List<Employee>> getEmployees() async {
-    final database = await db;
-    final result = await database.query('employees', orderBy: 'id DESC');
+    final db = await database;
+    final result = await db.query('employees');
     return result.map((e) => Employee.fromMap(e)).toList();
   }
 
   Future<int> updateEmployee(Employee emp) async {
-    final database = await db;
-    emp.totalSalary = emp.baseSalary + emp.allowance - emp.deduction;
-    return await database.update(
+    final db = await database;
+    return await db.update(
       'employees',
       emp.toMap(),
       where: 'id = ?',
@@ -62,7 +59,7 @@ class DBHelper {
   }
 
   Future<int> deleteEmployee(int id) async {
-    final database = await db;
-    return await database.delete('employees', where: 'id = ?', whereArgs: [id]);
+    final db = await database;
+    return await db.delete('employees', where: 'id = ?', whereArgs: [id]);
   }
 }
