@@ -1,6 +1,6 @@
 # flutter_apk_karyawan UTS
 
-Aplikasi dasar Flutter untuk UTS yang berisi halaman form, list dan sebagainnya pada APK pengajian ini.
+Aplikasi dasar Flutter untuk UTS yang berisi halaman form, list dan sebagainnya pada APK penggajian ini.
 
 ## Hasil Aplikasi
 | Tampilan Awal | Gambar Ditampilkan | Notifikasi Tombol |
